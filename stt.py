@@ -21,6 +21,7 @@ def Logo():
 ╚════██║   ██║      ██║   
 ███████║   ██║      ██║   
 ╚══════╝   ╚═╝      ╚═╝   v1.0
+Sub-Domain Takeover Tester
 by: DhelthaX  
 		''')
 
@@ -33,33 +34,39 @@ def Argumentos():
 	args = parser.parse_args()
 
 def subScan():
-	with open(subList, 'r') as fo:
+	with open(args.subList, 'r') as fo:
 		for line in fo:
 			line = line.rstrip("\n")
 			openPorts = portScan(line, portList)
-			sub = "http://"+line
+			if not openPorts:
+				continue
+			else:
+				if '443' in openPorts:
+					sub = "https://"+line
+				else:
+					sub = "http://"+line
 			try:
 				r = requests.get(sub, timeout = 2)
 			except requests.exceptions.ConnectionError:
 				pass	
 			if r.status_code == 404:
 				print("Possible Subdomain Takeover in: {} - {}".format(line, r.status_code))
-			else:
+			'''else:
 				print("The response of the subdomain {} is {}".format(line, r.status_code))
-				pass
+				pass'''
 
 def portScan(host, porta):
+	chkPorts = []
 	for ports in porta:
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.settimeout(2)
-		c = s.connect_ex((str(host),int(ports)))
-		if c == 0:
-			
-			print ("\nPort ",ports," Open:")
-		else:
-				print ("\nPort ",ports," Closed:")
-	else:
-		quit()
+		try:
+			c = s.connect_ex((str(host),int(ports)))
+			if c == 0:
+				chkPorts.append(ports)
+		except:
+			pass
+	return chkPorts
 
 def main():
 	Sis()
