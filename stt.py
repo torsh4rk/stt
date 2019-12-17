@@ -4,6 +4,7 @@ import sys
 import socket
 import argparse
 import os
+import threading
 
 portList = [80, 443]
 
@@ -69,10 +70,18 @@ def portScan(host, porta):
 	return chkPorts
 
 def main():
-	Sis()
+	#Sis()
 	Logo()
 	Argumentos()
 	subScan()
+	'''t1 = threading.Thread(target=subScan)
+	t2 = threading.Thread(target=subScan)
+
+	t1.start()
+	t2.start()
+
+	t1.join()
+	t2.join()'''
 
 if __name__ == '__main__':
 	main()
